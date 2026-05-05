@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F7474E61"
+    android:paddingHorizontal="14dp">
+
+
+    <!--    MY PROFILE CARD
+  ════════════════════════════════════════ -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/layoutMyProfile"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        android:layout_marginBottom="14dp"
+        app:cardBackgroundColor="#00000000"
+        app:cardCornerRadius="24dp"
+        app:cardElevation="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_card_midnight"
+            android:padding="18dp">
+
+            <!-- Accent top line -->
+            <View
+                android:layout_width="48dp"
+                android:layout_height="3dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="12dp"
+                android:background="@drawable/bg_accent_line" />
+
+            <!-- Profile Title -->
+            <TextView
+                android:id="@+id/tvMyProfileTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="MY PROFILE"
+                android:textAlignment="center"
+                android:textColor="#FACC15"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.18"
+                android:layout_marginBottom="14dp" />
+
+            <!-- Name + Email Row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="10dp">
+
+                <!-- Name Chip -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="6dp"
+                    android:background="@drawable/bg_crood_pill"
+                    android:orientation="vertical"
+                    android:padding="10dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="NAME"
+                        android:textColor="#3BFAE7"
+                        android:textSize="9sp"
+                        android:letterSpacing="0.12"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="3dp" />
+
+                    <TextView
+                        android:id="@+id/tvMyProfileName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Your Name"
+                        android:textColor="#47FF41"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <!-- Email Chip -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="6dp"
+                    android:background="@drawable/bg_crood_pill"
+                    android:orientation="vertical"
+                    android:padding="10dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="EMAIL"
+                        android:textColor="#3BFAE7"
+                        android:textSize="9sp"
+                        android:letterSpacing="0.12"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="3dp" />
+
+                    <TextView
+                        android:id="@+id/tvMyProfileEmail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="your@email.com"
+                        android:textColor="#D5E3FF"
+                        android:textSize="11sp"
+                        android:ellipsize="end"
+                        android:maxLines="1" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Lat / Lng Row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <!-- Latitude Pill -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="6dp"
+                    android:background="@drawable/bg_crood_pill"
+                    android:orientation="horizontal"
+                    android:padding="10dp"
+                    android:gravity="center_vertical">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="LATITUDE"
+                            android:textColor="#3BFAE7"
+                            android:textSize="8sp"
+                            android:letterSpacing="0.1"
+                            android:textStyle="bold"
+                            android:layout_marginBottom="2dp" />
+
+                        <TextView
+                            android:id="@+id/tvMyProfileLat"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Lat: 0.0"
+                            android:textColor="#4191FF"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Longitude Pill -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="6dp"
+                    android:background="@drawable/bg_crood_pill"
+                    android:orientation="horizontal"
+                    android:padding="10dp"
+                    android:gravity="center_vertical">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="LONGITUDE"
+                            android:textColor="#3BFAE7"
+                            android:textSize="8sp"
+                            android:letterSpacing="0.1"
+                            android:textStyle="bold"
+                            android:layout_marginBottom="2dp" />
+
+                        <TextView
+                            android:id="@+id/tvMyProfileLng"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Lng: 0.0"
+                            android:textColor="#4191FF"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+
+    <!-- ═══════════════════════════════════════
+         FRIEND LIST HEADER
+    ════════════════════════════════════════ -->
+    <TextView
+        android:id="@+id/tvFriendListHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="Friend List"
+        android:textColor="#E8F4FD"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layoutMyProfile" />
+
+    <!-- FRIEND RECYCLERVIEW
+════════════════════════════════════════ -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/userRecycler"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        android:clipToPadding="false"
+        android:paddingBottom="100dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvFriendListHeader"
+        tools:listitem="@layout/item_user" />
+
+
+    <!-- ═══════════════════════════════════════
+         FLOATING ACTION BUTTONS
+         All same color: Blue #4191FF
+    ════════════════════════════════════════ -->
+    <LinearLayout
+        android:id="@+id/fabContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:orientation="horizontal"
+        android:paddingEnd="4dp"
+        android:paddingBottom="24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <!-- Profile FAB -->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabProfile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:layout_marginRight="4dp"
+            android:contentDescription="Profile"
+            android:src="@drawable/person"
+            android:tooltipText="profile"
+            android:visibility="gone"
+            app:backgroundTint="#5DFF41"
+            app:elevation="8dp"
+            app:fabSize="mini"
+            app:maxImageSize="20dp"
+            app:rippleColor="#28F8E6"
+            app:tint="@color/white" />
+
+        <!-- Map FAB -->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabShowMap"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:layout_marginRight="4dp"
+            android:contentDescription="Map"
+            android:src="@drawable/map"
+            android:tooltipText="MapAll"
+            android:visibility="gone"
+            app:backgroundTint="#28F8E6"
+            app:elevation="8dp"
+            app:fabSize="mini"
+            app:maxImageSize="20dp"
+            app:rippleColor="#76FF1A"
+            app:tint="@color/white" />
+
+        <!-- Logout FAB -->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabLogout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:layout_marginRight="4dp"
+            android:contentDescription="Logout"
+            android:src="@drawable/logout"
+            android:tooltipText="Logout"
+            android:visibility="gone"
+            app:backgroundTint="#F66923"
+            app:elevation="8dp"
+            app:fabSize="mini"
+            app:maxImageSize="20dp"
+            app:rippleColor="#FA1F1F"
+            app:tint="@color/white" />
+
+        <!-- Main FAB -->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabMain"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="28dp"
+            android:contentDescription="Menu"
+            android:src="@drawable/dasboard"
+            android:tooltipText="Menu"
+            app:backgroundTint="#06B6D4"
+            app:elevation="12dp"
+            app:fabSize="normal"
+            app:maxImageSize="26dp"
+            app:rippleColor="#3DFA13"
+            app:tint="@color/white" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

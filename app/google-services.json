@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "757455718058",
+    "project_id": "name-3job3-locationmanagement",
+    "storage_bucket": "name-3job3-locationmanagement.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:757455718058:android:8182a1378ecf1f534ff2d3",
+        "android_client_info": {
+          "package_name": "com.example.name_3job3_locationmanagement"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA_nw-BEVzwzd20vL81xupu7z7m4C-LdYI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
