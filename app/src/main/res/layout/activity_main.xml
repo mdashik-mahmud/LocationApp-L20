@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#808382">
+    android:background="#F7C6CAD9">
 
     <!-- Logo -->
     <de.hdodenhof.circleimageview.CircleImageView
@@ -26,7 +26,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Location Management"
-        android:textColor="@android:color/white"
+        android:textColor="#02AB76"
         android:gravity="center"
         android:textSize="30sp"
         android:textStyle="bold"
@@ -43,7 +43,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Track friends in real-time"
-        android:textColor="@android:color/white"
+        android:textColor="#E60E7A"
         android:textSize="20sp"
         android:alpha="0.8"
         app:layout_constraintTop_toBottomOf="@id/title"
