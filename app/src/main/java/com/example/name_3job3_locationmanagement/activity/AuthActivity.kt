@@ -16,221 +16,163 @@ import com.example.name_3job3_locationmanagement.databinding.ActivityAuthBinding
 import com.example.name_3job3_locationmanagement.repo.UserRepository
 import com.example.name_3job3_locationmanagement.viewmodle.AuthViewModel
 import com.google.android.gms.common.api.ResolvableApiException
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.LocationSettingsRequest
-import com.google.android.gms.location.Priority
+import com.google.android.gms.location.*
 
 class AuthActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAuthBinding
-
     private val repo = UserRepository()
 
-    private val viewModel: AuthViewModel by viewModels<AuthViewModel> {
+    private val viewModel: AuthViewModel by viewModels {
         object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 return AuthViewModel(repo) as T
             }
         }
     }
-    private val locationPermissionLauncher =
-        registerForActivityResult(
-            ActivityResultContracts.RequestPermission()
-        ) { isGranted ->
 
-            if (isGranted) {
+    private var pendingAuthType: String = "" // "REGISTER" or "LOGIN"
 
-                checkLocationSettingsAndProceed()
-
+    // Permission request
+    private val permissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+            if (granted) {
+                checkLocationSettings()
             } else {
-               Toast.makeText(
-                    this,
-                    "Location permission is required",
-                    Toast.LENGTH_LONG
-                ).show()
+                Toast.makeText(this, "Location permission required", Toast.LENGTH_SHORT).show()
             }
         }
+
+    // GPS enable result
+    private val resolutionLauncher =
+        registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                checkLocationSettings()
+            } else {
+                Toast.makeText(this, "Please enable location", Toast.LENGTH_SHORT).show()
+            }
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivityAuthBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // remember email
-        val prefs = getSharedPreferences("login_prefs", MODE_PRIVATE)
-
-        val isRemembered = prefs.getBoolean("remember", false)
-
-        if (isRemembered) {
-            binding.email.setText(prefs.getString("email", ""))
-            binding.cbRemember.isChecked = true
-        }
-        // LOGIN
-        binding.btnLogin.setOnClickListener {
-
-            val email = binding.email.text.toString().trim()
-            val password = binding.password.text.toString().trim()
-
-            if (email.isEmpty() || password.isEmpty()) {
-                Toast.makeText(
-                    this,
-                    "Please fill all fields",
-                    Toast.LENGTH_SHORT
-                ).show()
-
-                return@setOnClickListener
-            }
-
-            val editor = prefs.edit()
-            if (binding.cbRemember.isChecked) {
-
-                editor.putString("email", email)
-                editor.putBoolean("remember", true)
-
-            } else {
-
-                editor.clear()
-            }
-            editor.apply()
-
-            viewModel.login(email, password)
-        }
-
-        // REGISTER
+        // REGISTER BUTTON (FIRST TIME ONLY STRICT LOCATION REQUIRED)
         binding.btnRegister.setOnClickListener {
 
-            val email = binding.email.text.toString().trim()
-            val password = binding.password.text.toString().trim()
+            pendingAuthType = "REGISTER"
+            checkPermissionAndProceed()
+        }
 
-            if (email.isEmpty() || password.isEmpty()) {
+        // LOGIN BUTTON (EVERY TIME LOCATION REQUIRED)
+        binding.btnLogin.setOnClickListener {
 
-                Toast.makeText(
-                    this,
-                    "Please fill all fields",
-                    Toast.LENGTH_SHORT
-                ).show()
-
-                return@setOnClickListener
-            }
-            viewModel.register(email, password)
+            pendingAuthType = "LOGIN"
+            checkPermissionAndProceed()
         }
 
         // REGISTER RESULT
-        viewModel.registerResult.observe(this) { (success, message) ->
-
+        viewModel.registerResult.observe(this) { (success, _) ->
             if (success) {
-
-                Toast.makeText(
-                    this,
-                    "Registration Successful",
-                    Toast.LENGTH_SHORT
-                ).show()
-
+                Toast.makeText(this, "Registration Successful", Toast.LENGTH_SHORT).show()
             } else {
-
-                Toast.makeText(
-                    this,
-                    "Registration Failed",
-                    Toast.LENGTH_SHORT
-                ).show()
+                Toast.makeText(this, "Registration Failed", Toast.LENGTH_SHORT).show()
             }
         }
+
         // LOGIN RESULT
-        viewModel.loginResult.observe(this) { (success, message) ->
-
+        viewModel.loginResult.observe(this) { (success, _) ->
             if (success) {
-
-                Toast.makeText(
-                    this,
-                    "Login Successful",
-                    Toast.LENGTH_SHORT
-                ).show()
-
-                checkLocationPermissionAndProceed()
-
+                Toast.makeText(this, "Login Successful", Toast.LENGTH_SHORT).show()
+                navigateToFriendList()
             } else {
-
-                Toast.makeText(
-                    this,
-                    "Login Failed",
-                    Toast.LENGTH_SHORT
-                ).show()
+                Toast.makeText(this, "Login Failed", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    // CHECK LOCATION PERMISSION
-    private fun checkLocationPermissionAndProceed() {
+    // STEP 1: Permission check
+    private fun checkPermissionAndProceed() {
 
         when {
-
             ContextCompat.checkSelfPermission(
                 this,
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED -> {
 
-                checkLocationSettingsAndProceed()
+                checkLocationSettings()
             }
 
             else -> {
-
-                locationPermissionLauncher.launch(
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                )
+                permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
             }
         }
     }
 
-    // CHECK GPS / LOCATION SETTINGS
-    private fun checkLocationSettingsAndProceed() {
+    // STEP 2: GPS ON check
+    private fun checkLocationSettings() {
 
-        val locationRequest = LocationRequest.Builder(
+        val request = LocationRequest.Builder(
             Priority.PRIORITY_HIGH_ACCURACY,
             1000
         ).build()
 
         val builder = LocationSettingsRequest.Builder()
-            .addLocationRequest(locationRequest)
+            .addLocationRequest(request)
 
         val client = LocationServices.getSettingsClient(this)
 
-        val task = client.checkLocationSettings(builder.build())
+        client.checkLocationSettings(builder.build())
+            .addOnSuccessListener {
 
-        task.addOnSuccessListener {
+                // LOCATION OK → CONTINUE FLOW
+                proceedAuth()
+            }
+            .addOnFailureListener { exception ->
 
-            navigateToFriendList()
+                if (exception is ResolvableApiException) {
+
+                    try {
+                        val intentSenderRequest =
+                            IntentSenderRequest.Builder(exception.resolution).build()
+
+                        resolutionLauncher.launch(intentSenderRequest)
+
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }
+            }
+    }
+
+    // STEP 3: AUTH FLOW CONTROL
+    private fun proceedAuth() {
+
+        val email = binding.email.text.toString().trim()
+        val password = binding.password.text.toString().trim()
+
+        if (email.isEmpty() || password.isEmpty()) {
+            Toast.makeText(this, "Fill all fields", Toast.LENGTH_SHORT).show()
+            return
         }
 
-        task.addOnFailureListener { exception ->
+        when (pendingAuthType) {
 
-            if (exception is ResolvableApiException) {
+            "REGISTER" -> {
+                viewModel.register(email, password)
+            }
 
-                try {
-
-                    exception.startResolutionForResult(
-                        this,
-                        1001
-                    )
-
-                } catch (sendEx: IntentSender.SendIntentException) {
-
-                    sendEx.printStackTrace()
-                }
+            "LOGIN" -> {
+                viewModel.login(email, password)
             }
         }
     }
 
-    // NAVIGATE
+    // NAVIGATION
     private fun navigateToFriendList() {
-
-    val intent = Intent(
-        this,
-        FriendListActivity::class.java
-    )
-
-    startActivity(intent)
-
-    finish()
-}
+        startActivity(Intent(this, FriendListActivity::class.java))
+        finish()
+    }
 }
