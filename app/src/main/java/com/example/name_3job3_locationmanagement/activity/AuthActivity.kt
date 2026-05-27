@@ -6,6 +6,7 @@ import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -31,12 +32,11 @@ class AuthActivity : AppCompatActivity() {
         }
     }
 
-    private var pendingAuthType: String = "" // REGISTER / LOGIN
+    private var pendingAuthType: String = ""
 
     // Permission
     private val permissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
-
             if (granted) {
                 checkLocationSettings()
             } else {
@@ -47,7 +47,6 @@ class AuthActivity : AppCompatActivity() {
     // GPS enable result
     private val resolutionLauncher =
         registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
-
             if (result.resultCode == RESULT_OK) {
                 checkLocationSettings()
             } else {
@@ -73,30 +72,20 @@ class AuthActivity : AppCompatActivity() {
             checkPermissionAndProceed()
         }
 
-        // REGISTER RESULT (SAFE FIXED)
+        // REGISTER RESULT
         viewModel.registerResult.observe(this) { result ->
-
             val success = result.first
             val message = result.second
 
-            if (success) {
-                Toast.makeText(
-                    this,
-                    message ?: "Registration Successful",
-                    Toast.LENGTH_SHORT
-                ).show()
-            } else {
-                Toast.makeText(
-                    this,
-                    message ?: "Registration Failed",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
+            Toast.makeText(
+                this,
+                message ?: if (success) "Registration Successful" else "Registration Failed",
+                Toast.LENGTH_SHORT
+            ).show()
         }
 
-        // LOGIN RESULT (SAFE FIXED)
+        // LOGIN RESULT
         viewModel.loginResult.observe(this) { result ->
-
             val success = result.first
             val message = result.second
 
@@ -119,7 +108,7 @@ class AuthActivity : AppCompatActivity() {
         }
     }
 
-    // STEP 1: Permission check
+    // Permission check
     private fun checkPermissionAndProceed() {
 
         when {
@@ -137,7 +126,7 @@ class AuthActivity : AppCompatActivity() {
         }
     }
 
-    // STEP 2: GPS check
+    // GPS check
     private fun checkLocationSettings() {
 
         val request = LocationRequest.Builder(
@@ -152,27 +141,21 @@ class AuthActivity : AppCompatActivity() {
 
         client.checkLocationSettings(builder.build())
             .addOnSuccessListener {
-
                 proceedAuth()
             }
             .addOnFailureListener { exception ->
 
                 if (exception is ResolvableApiException) {
 
-                    try {
-                        val intentSenderRequest =
-                            IntentSenderRequest.Builder(exception.resolution).build()
+                    val intentSenderRequest =
+                        IntentSenderRequest.Builder(exception.resolution).build()
 
-                        resolutionLauncher.launch(intentSenderRequest)
-
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
+                    resolutionLauncher.launch(intentSenderRequest)
                 }
             }
     }
 
-    // STEP 3: AUTH FLOW
+    // AUTH FLOW
     private fun proceedAuth() {
 
         val email = binding.email.text.toString().trim()
@@ -184,14 +167,11 @@ class AuthActivity : AppCompatActivity() {
         }
 
         when (pendingAuthType) {
-
             "REGISTER" -> viewModel.register(email, password)
-
             "LOGIN" -> viewModel.login(email, password)
         }
     }
 
-    // NAVIGATION
     private fun navigateToFriendList() {
         startActivity(Intent(this, FriendListActivity::class.java))
         finish()
