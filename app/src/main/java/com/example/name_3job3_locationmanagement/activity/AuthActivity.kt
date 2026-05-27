@@ -31,11 +31,12 @@ class AuthActivity : AppCompatActivity() {
         }
     }
 
-    private var pendingAuthType: String = "" // "REGISTER" or "LOGIN"
+    private var pendingAuthType: String = "" // REGISTER / LOGIN
 
-    // Permission request
+    // Permission
     private val permissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+
             if (granted) {
                 checkLocationSettings()
             } else {
@@ -46,10 +47,11 @@ class AuthActivity : AppCompatActivity() {
     // GPS enable result
     private val resolutionLauncher =
         registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
+
             if (result.resultCode == RESULT_OK) {
                 checkLocationSettings()
             } else {
-                Toast.makeText(this, "Please enable location", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Location must be enabled", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -59,36 +61,60 @@ class AuthActivity : AppCompatActivity() {
         binding = ActivityAuthBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // REGISTER BUTTON (FIRST TIME ONLY STRICT LOCATION REQUIRED)
+        // REGISTER
         binding.btnRegister.setOnClickListener {
-
             pendingAuthType = "REGISTER"
             checkPermissionAndProceed()
         }
 
-        // LOGIN BUTTON (EVERY TIME LOCATION REQUIRED)
+        // LOGIN
         binding.btnLogin.setOnClickListener {
-
             pendingAuthType = "LOGIN"
             checkPermissionAndProceed()
         }
 
-        // REGISTER RESULT
-        viewModel.registerResult.observe(this) { (success, _) ->
+        // REGISTER RESULT (SAFE FIXED)
+        viewModel.registerResult.observe(this) { result ->
+
+            val success = result.first
+            val message = result.second
+
             if (success) {
-                Toast.makeText(this, "Registration Successful", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this,
+                    message ?: "Registration Successful",
+                    Toast.LENGTH_SHORT
+                ).show()
             } else {
-                Toast.makeText(this, "Registration Failed", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this,
+                    message ?: "Registration Failed",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
 
-        // LOGIN RESULT
-        viewModel.loginResult.observe(this) { (success, _) ->
+        // LOGIN RESULT (SAFE FIXED)
+        viewModel.loginResult.observe(this) { result ->
+
+            val success = result.first
+            val message = result.second
+
             if (success) {
-                Toast.makeText(this, "Login Successful", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this,
+                    message ?: "Login Successful",
+                    Toast.LENGTH_SHORT
+                ).show()
+
                 navigateToFriendList()
+
             } else {
-                Toast.makeText(this, "Login Failed", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this,
+                    message ?: "Login Failed",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
     }
@@ -111,7 +137,7 @@ class AuthActivity : AppCompatActivity() {
         }
     }
 
-    // STEP 2: GPS ON check
+    // STEP 2: GPS check
     private fun checkLocationSettings() {
 
         val request = LocationRequest.Builder(
@@ -127,7 +153,6 @@ class AuthActivity : AppCompatActivity() {
         client.checkLocationSettings(builder.build())
             .addOnSuccessListener {
 
-                // LOCATION OK → CONTINUE FLOW
                 proceedAuth()
             }
             .addOnFailureListener { exception ->
@@ -147,7 +172,7 @@ class AuthActivity : AppCompatActivity() {
             }
     }
 
-    // STEP 3: AUTH FLOW CONTROL
+    // STEP 3: AUTH FLOW
     private fun proceedAuth() {
 
         val email = binding.email.text.toString().trim()
@@ -160,13 +185,9 @@ class AuthActivity : AppCompatActivity() {
 
         when (pendingAuthType) {
 
-            "REGISTER" -> {
-                viewModel.register(email, password)
-            }
+            "REGISTER" -> viewModel.register(email, password)
 
-            "LOGIN" -> {
-                viewModel.login(email, password)
-            }
+            "LOGIN" -> viewModel.login(email, password)
         }
     }
 
