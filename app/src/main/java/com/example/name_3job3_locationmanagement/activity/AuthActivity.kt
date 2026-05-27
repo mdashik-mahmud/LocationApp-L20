@@ -224,10 +224,13 @@ class AuthActivity : AppCompatActivity() {
     // NAVIGATE
     private fun navigateToFriendList() {
 
-        val intent = Intent(
-            this,
-            FriendListActivity::class.java)  startActivity(intent)
+    val intent = Intent(
+        this,
+        FriendListActivity::class.java
+    )
 
-        finish()
-    }
+    startActivity(intent)
+
+    finish()
+}
 }
